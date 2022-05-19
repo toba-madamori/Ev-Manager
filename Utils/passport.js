@@ -5,7 +5,7 @@ const User = require('../Users/models')
 const FindOrCreate = (input)=>{
     return new Promise((resolve, reject)=>{
         const user = User.findOne({ email:input._json.email})
-        if(user.provider === input.provider) {
+        if(user.provider === input.provider || user.password) {
             return resolve(user)
         } else{
             const newUser = User.create({ name:input.givenName, email:input._json.email, provider:input.provider })
