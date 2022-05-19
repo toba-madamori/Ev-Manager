@@ -4,7 +4,7 @@ const { signAccessToken, confirmRegistrationToken, verifyConfirmRegistrationToke
 const User = require('./models')
 const registrationMail = require('../templates/emails/registrationMail')
 const sendEmail = require('../Utils/emailService')
-const { UnauthenticatedError } = require('../Errors')
+const { UnauthenticatedError, BadRequestError } = require('../Errors')
 
 
 const register = async(req,res)=>{
@@ -33,7 +33,22 @@ const confirmRegistration = async(req,res)=>{
 }
 
 const login = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"login new user" })
+    const { email, password} = req.body
+    if(!email || !password) throw new BadRequestError('please provide an email and password')
+
+    const user = await User.findOne({ email })
+    if(!user) throw new UnauthenticatedError('Invalid credentials')
+
+    const isMatch = await user.comparePassword(password)
+    if(!isMatch) throw new UnauthenticatedError('Invalid credentials')
+
+    const confirmRegistration = user.verified
+    if(!confirmRegistration) throw new UnauthenticatedError('Incomplete registration error')
+
+
+    const accessToken = await signAccessToken(user._id)
+
+    res.status(StatusCodes.OK).json({ accessToken })
 }
 
 const passportGoogle = async(req,res)=>{
