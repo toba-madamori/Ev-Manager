@@ -1,8 +1,9 @@
 const { StatusCodes } = require('http-status-codes')
 const { FindOrCreate } = require('../Utils/passport')
-const { signAccessToken, confirmRegistrationToken, verifyConfirmRegistrationToken} = require('../Utils/tokens')
+const { signAccessToken, confirmRegistrationToken, verifyConfirmRegistrationToken, forgotPasswordToken} = require('../Utils/tokens')
 const User = require('./models')
 const registrationMail = require('../templates/emails/registrationMail')
+const passwordResetMail = require('../templates/emails/passwordResetMail')
 const sendEmail = require('../Utils/emailService')
 const { UnauthenticatedError, BadRequestError } = require('../Errors')
 
@@ -65,7 +66,17 @@ const passportGoogle = async(req,res)=>{
 
 
 const forgotPassword = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"forgot password" })
+    const { email } = req.body
+
+    const user = await User.findOne({ email })
+    if(!user) throw new UnauthenticatedError('Invalid credentials')
+
+    const token = await forgotPasswordToken(user)
+    const link = `${req.protocol}://${req.headers.host}${process.env.RESET_PASSWORD_URL}/${user._id}/${token}`
+
+    sendEmail(new passwordResetMail(email, link))
+
+    res.status(StatusCodes.OK).json({ msg:'A reset password link has been sent to your email' })
 }
 
 const resetPassword = async(req,res)=>{
