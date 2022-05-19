@@ -1,11 +1,12 @@
 const { StatusCodes } = require('http-status-codes')
 const { FindOrCreate } = require('../Utils/passport')
-const { signAccessToken, confirmRegistrationToken, verifyConfirmRegistrationToken, forgotPasswordToken} = require('../Utils/tokens')
+const { signAccessToken, confirmRegistrationToken, verifyConfirmRegistrationToken, forgotPasswordToken, verifyForgotPasswordToken} = require('../Utils/tokens')
 const User = require('./models')
 const registrationMail = require('../templates/emails/registrationMail')
 const passwordResetMail = require('../templates/emails/passwordResetMail')
 const sendEmail = require('../Utils/emailService')
-const { UnauthenticatedError, BadRequestError } = require('../Errors')
+const { UnauthenticatedError, BadRequestError, NotFoundError } = require('../Errors')
+const bcrypt = require('bcrypt')
 
 
 const register = async(req,res)=>{
@@ -80,7 +81,22 @@ const forgotPassword = async(req,res)=>{
 }
 
 const resetPassword = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"reset password" })
+    const { id:_id, token } = req.params
+    let { new_password } = req.body
+
+    const user = await User.findById(_id)
+    if(!user) throw new NotFoundError('sorry this user does not exist')
+
+    const valid = await verifyForgotPasswordToken(user,token)
+    if(!valid) throw new UnauthenticatedError('Invalid password reset params')
+
+    const salt = await bcrypt.genSalt(10)
+    new_password = await bcrypt.hash(new_password, salt)
+
+    const updatedUserPassword = await User.findByIdAndUpdate({ _id }, { password:new_password }, {runValidators:true})
+    if(updatedUserPassword){
+        return res.status(StatusCodes.OK).json({ msg:'password reset successful' })
+    }
 }
 
 const changePassword = async(req,res)=>{
