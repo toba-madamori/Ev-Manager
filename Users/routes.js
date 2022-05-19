@@ -14,7 +14,7 @@ const {
 router.post('/register', register) 
 router.patch('/confirm-registration/:id/:token', confirmRegistration)
 router.post('/login', login)
-router.get('/forgot-password', forgotPassword)
+router.post('/forgot-password', forgotPassword)
 router.post('/reset-password/:id/:token', resetPassword)
 router.patch('/change-password', changePassword) 
 router.get('/auth/google',  passport.authenticate('google', { scope: ['profile','email'] })) // will lead to google Oauth screens
