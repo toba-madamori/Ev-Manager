@@ -100,7 +100,22 @@ const resetPassword = async(req,res)=>{
 }
 
 const changePassword = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"change password" })
+    let { old_password, new_password } = req.body
+    const { userID:_id } = req.user
+    
+    const user = await User.findById(_id)
+    if(!user) throw new UnauthenticatedError('Authentication invalid')
+
+    const isMatch = user.comparePassword(old_password)
+    if(!isMatch) throw new UnauthenticatedError('Invalid credentials')
+
+    const salt = await bcrypt.genSalt(10)
+    new_password = await bcrypt.hash(new_password, salt)
+
+    const updatedUserPassword = await User.findByIdAndUpdate({ _id }, { password:new_password }, {runValidators:true})
+    if(updatedUserPassword){
+        return res.status(StatusCodes.OK).json({ msg:'password reset successful' })
+    }
 }
 
 module.exports = {
