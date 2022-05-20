@@ -7,10 +7,12 @@ const passwordResetMail = require('../templates/emails/passwordResetMail')
 const sendEmail = require('../Utils/emailService')
 const { UnauthenticatedError, BadRequestError, NotFoundError } = require('../Errors')
 const bcrypt = require('bcrypt')
+const Profile = require('../Profile/models')
 
 
 const register = async(req,res)=>{
     const user = await User.create({...req.body})
+    const profile = await Profile.create({ userid:user._id })
     
     const token = await confirmRegistrationToken(user)
     const link = `${req.protocol}://${req.headers.host}${process.env.CONFIRM_REGISTRATION_URL}/${user._id}/${token}`
