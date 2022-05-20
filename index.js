@@ -8,6 +8,7 @@ const app = express()
 const connectDb = require('./Db/connect')
 const passport = require('passport')
 const userRouter =  require('./Users/routes')
+const profileRouter = require('./Profile/routes')
 
 
 //custom-built middleware
@@ -27,6 +28,7 @@ app.get('/', (req,res)=>{
 
 //routes
 app.use('/api/v1/auth', userRouter)
+app.use('/api/v1/profile', authMiddleware, profileRouter)
 
 app.use(errorHandlerMiddleware)
 app.use(notFound)
