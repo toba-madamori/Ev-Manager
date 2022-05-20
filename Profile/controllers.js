@@ -5,7 +5,10 @@ const Profile = require('./models')
 
 
 const getProfile = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"get user profile" })
+    const { id:profileID } = req.params
+
+    const profile = await Profile.findById({ _id:profileID }).populate('userid', 'name email -_id')
+    res.status(StatusCodes.OK).json({ profile })
 }
 
 const updateProfile = async(req,res)=>{
@@ -25,7 +28,7 @@ const updateProfile = async(req,res)=>{
         profileUpdate.tags = tagArr
     }
 
-    const updatedProfile = await Profile.findByIdAndUpdate({ _id:profileID}, profileUpdate, { new:true,runValidators:true }).populate('userid', 'name email -_id').select('-__v')
+    const updatedProfile = await Profile.findByIdAndUpdate({ _id:profileID}, profileUpdate, { new:true,runValidators:true }).populate('userid', 'name email -_id')
     res.status(StatusCodes.OK).json({ updatedProfile })
 }
 
