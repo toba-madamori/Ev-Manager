@@ -3,11 +3,11 @@ const mongoose = require('mongoose')
 const ProfileSchema = new mongoose.Schema({
     userid:{
         type:mongoose.Types.ObjectId,
-        ref:'User',
+        ref:'Users',
         required:[true, 'Please provide the userid']
     },
     phone_number:{
-        type:Number,
+        type:String,
     },
     tags:[{
         type:String,
