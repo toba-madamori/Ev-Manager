@@ -23,7 +23,8 @@
     "nodemailer": "^6.7.5",
     "nodemailer-smtp-transport": "^2.7.4",
     "passport": "^0.5.3",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "stats-lite": "^2.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"

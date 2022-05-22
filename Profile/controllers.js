@@ -2,13 +2,14 @@ const { StatusCodes } = require('http-status-codes')
 const { UnauthenticatedError, BadRequestError, NotFoundError } = require('../Errors')
 const User = require('../Users/models')
 const Profile = require('./models')
-const { profileUpdateValidator } = require('../Utils/validation')
+const { profileUpdateValidator, ratingValidator } = require('../Utils/validation')
+const stats = require('stats-lite')
 
 
 const getProfile = async(req,res)=>{
     const { id:profileID } = req.params
 
-    const profile = await Profile.findById({ _id:profileID }).populate('userid', 'name email -_id')
+    const profile = await Profile.findById({ _id:profileID }).populate('userid', 'name email')
     res.status(StatusCodes.OK).json({ profile })
 }
 
@@ -34,7 +35,17 @@ const updateProfile = async(req,res)=>{
 }
 
 const rateUser = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"rated user profile" })
+    const { id:_id } = req.params
+    let { rating } = req.query
+
+    const {error} = ratingValidator.validate({rating})
+    if(error) throw new BadRequestError(error.message)
+
+    const profile = await Profile.findById(_id)
+    rating = stats.mean([profile.rating, rating])
+    
+    const updatedProfile = await Profile.findByIdAndUpdate({_id}, {rating}, {new:true})
+    res.status(StatusCodes.OK).json({ updatedProfile })
 }
 
 module.exports = {

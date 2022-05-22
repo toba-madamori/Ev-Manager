@@ -24,6 +24,10 @@ const forgotPasswordValidator = Joi.object().keys({
     email
 })
 
+const ratingValidator = Joi.object().keys({
+    rating
+})
+
 const changePasswordValidator = Joi.object().keys({
     new_password:password,
     old_password:password
@@ -41,5 +45,6 @@ module.exports = {
     loginValidator,
     forgotPasswordValidator,
     changePasswordValidator,
-    profileUpdateValidator
+    profileUpdateValidator,
+    ratingValidator
 }
