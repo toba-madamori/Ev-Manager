@@ -8,9 +8,12 @@ const sendEmail = require('../Utils/emailService')
 const { UnauthenticatedError, BadRequestError, NotFoundError } = require('../Errors')
 const bcrypt = require('bcrypt')
 const Profile = require('../Profile/models')
-
+const { registerValidator, loginValidator, forgotPasswordValidator,changePasswordValidator } = require('../Utils/validation')
 
 const register = async(req,res)=>{
+    const { error } = registerValidator.validate({...req.body})
+    if(error) throw new BadRequestError(error.message)
+
     const user = await User.create({...req.body})
     const profile = await Profile.create({ userid:user._id })
     
@@ -31,19 +34,19 @@ const confirmRegistration = async(req,res)=>{
 
     if(!valid)throw new UnauthenticatedError('Invalid Token')
 
-    const updatedUser = await User.findByIdAndUpdate({ _id }, { verified:true }, {runValidators:true})
+    const updatedUser = await User.findByIdAndUpdate({ _id }, { verified:true })
 
     res.status(StatusCodes.OK).json({ msg:'your registration is complete, please head to the login page..' })
 }
 
 const login = async(req,res)=>{
-    const { email, password} = req.body
-    if(!email || !password) throw new BadRequestError('please provide an email and password')
+    const { error } = loginValidator.validate({...req.body})
+    if(error) throw new BadRequestError(error.message)
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email:req.body.email })
     if(!user) throw new UnauthenticatedError('Invalid credentials')
 
-    const isMatch = await user.comparePassword(password)
+    const isMatch = await user.comparePassword(req.body.password)
     if(!isMatch) throw new UnauthenticatedError('Invalid credentials')
 
     const confirmRegistration = user.verified
@@ -70,7 +73,9 @@ const passportGoogle = async(req,res)=>{
 
 const forgotPassword = async(req,res)=>{
     const { email } = req.body
-
+    const { error } = forgotPasswordValidator.validate({...req.body})
+    if(error) throw new BadRequestError(error.message)
+    
     const user = await User.findOne({ email })
     if(!user) throw new UnauthenticatedError('Invalid credentials')
 
@@ -102,11 +107,13 @@ const resetPassword = async(req,res)=>{
 }
 
 const changePassword = async(req,res)=>{
+    const {error} = changePasswordValidator.validate({...req.body})
+    if(error) throw new BadRequestError(error.message)
+
     let { old_password, new_password } = req.body
     const { userID:_id } = req.user
     
     const user = await User.findById(_id)
-    if(!user) throw new UnauthenticatedError('Authentication invalid')
 
     const isMatch = user.comparePassword(old_password)
     if(!isMatch) throw new UnauthenticatedError('Invalid credentials')
@@ -114,7 +121,7 @@ const changePassword = async(req,res)=>{
     const salt = await bcrypt.genSalt(10)
     new_password = await bcrypt.hash(new_password, salt)
 
-    const updatedUserPassword = await User.findByIdAndUpdate({ _id }, { password:new_password }, {runValidators:true})
+    const updatedUserPassword = await User.findByIdAndUpdate({ _id }, { password:new_password })
     if(updatedUserPassword){
         return res.status(StatusCodes.OK).json({ msg:'password reset successful' })
     }
