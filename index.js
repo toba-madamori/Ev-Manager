@@ -30,7 +30,7 @@ app.get('/', (req,res)=>{
 //routes
 app.use('/api/v1/auth', userRouter)
 app.use('/api/v1/profile', profileRouter)
-app.use('/api/v1/event', authMiddleware, eventRouter)
+app.use('/api/v1/event', eventRouter)
 
 app.use(errorHandlerMiddleware)
 app.use(notFound)

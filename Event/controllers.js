@@ -4,8 +4,18 @@ const { Event } = require('./model')
 const { eventRegistrationToken } = require('../Utils/tokens')
 
 
+// get a particular event : host/user
 const getEvent = async(req,res)=>{
+    const { id:eventID } = req.params
+
     res.status(StatusCodes.OK).json({ msg:"get a particular event" })
+}
+
+// get all events created by a particular host/user: for users to view all the events theyve created
+// will add pagination 
+const getAllEvents = async(req,res)=>{
+    const events = await Event.find({ userid:req.user.userID }).select('_id name')
+    res.status(StatusCodes.OK).json({ events })
 }
 
 const createEvent = async(req,res)=>{
@@ -51,5 +61,6 @@ module.exports={
     searchEvents,
     registerForEvent,
     generateLink,
-    trendingEvents
+    trendingEvents,
+    getAllEvents
 }
