@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { StatusCodes } = require('http-status-codes')
+const { UnauthenticatedError } = require('../Errors')
 
 const signAccessToken = (userID)=>{
     return new Promise((resolve, reject)=>{
@@ -32,7 +33,7 @@ const forgotPasswordToken = (user)=>{
         }
         jwt.sign(payload,secret,options, (err, token)=>{
             if(err){
-                console.log(err)
+                console.log(err.message)
                 reject(StatusCodes.INTERNAL_SERVER_ERROR)
             }
             resolve(token)
@@ -43,7 +44,11 @@ const forgotPasswordToken = (user)=>{
 const verifyForgotPasswordToken = (user,token)=>{
     return new Promise((resolve,reject)=>{
         jwt.verify(token, process.env.JWT_SECRET_FORGOT_PASSWORD + user.password, (err,payload)=>{
-            if(err) return reject(StatusCodes.UNAUTHORIZED)
+            if(err){
+                console.log(err)
+                const message = err.name === 'TokenExpiredError' ? err.message : 'Authentication Invalid'
+                return reject( new UnauthenticatedError(message))
+            }
             const valid = true
             resolve(valid)
         })
@@ -62,7 +67,7 @@ const confirmRegistrationToken = (user)=>{
         }
         jwt.sign(payload,secret,options, (err, token)=>{
             if(err){
-                console.log(err)
+                console.log(err.message)
                 reject(StatusCodes.INTERNAL_SERVER_ERROR)
             }
             resolve(token)
@@ -74,18 +79,54 @@ const verifyConfirmRegistrationToken = (user,token)=>{
     return new Promise((resolve,reject)=>{
         jwt.verify(token, process.env.JWT_SECRET_CONFIRM_REG_TOKEN + user.password, (err,payload)=>{
             if(err){
-                console.log(err);
-                return reject(StatusCodes.UNAUTHORIZED)
+                console.log(err)
+                const message = err.name === 'TokenExpiredError' ? err.message : 'Authentication Invalid'
+                return reject( new UnauthenticatedError(message))
             }    
             const valid = true
             resolve(valid)
         })
     })
 }
+
+const eventRegistrationToken = (eventid)=>{
+    return new Promise((resolve, reject)=>{
+        const payload={
+            id:eventid
+        }
+        const secret = process.env.JWT_SECRET_EVENT_TOKEN
+        const options = {
+            expiresIn:process.env.JWT_LIFETIME_EVENT_TOKEN
+        }
+        jwt.sign(payload, secret, options, (err,token)=>{
+            if(err){
+                console.log(err.message)
+                return reject(StatusCodes.INTERNAL_SERVER_ERROR)
+            }
+            resolve(token)
+        })
+    })
+}
+
+const verifyEventRegistrationToken= (token)=>{
+    return new Promise((resolve, reject)=>{
+        jwt.verify(token, process.env.JWT_SECRET_EVENT_TOKEN, (err,payload)=>{
+            if(err){
+                console.log(err)
+                const message = err.name === 'TokenExpiredError' ? err.message : 'Authentication Invalid'
+                return reject( new UnauthenticatedError(message))
+            }
+            resolve(payload)
+        })
+    })
+}
+
 module.exports = {
     signAccessToken,
     forgotPasswordToken,
     verifyForgotPasswordToken,
     confirmRegistrationToken,
-    verifyConfirmRegistrationToken
+    verifyConfirmRegistrationToken,
+    eventRegistrationToken,
+    verifyEventRegistrationToken
 }
