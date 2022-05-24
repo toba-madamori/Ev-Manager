@@ -11,9 +11,6 @@ const Profile = require('../Profile/models')
 const { registerValidator, loginValidator, forgotPasswordValidator,changePasswordValidator } = require('../Utils/validation')
 
 const register = async(req,res)=>{
-    const { error } = registerValidator.validate({...req.body})
-    if(error) throw new BadRequestError(error.message)
-
     const user = await User.create({...req.body})
     const profile = await Profile.create({ userid:user._id })
     
@@ -40,9 +37,6 @@ const confirmRegistration = async(req,res)=>{
 }
 
 const login = async(req,res)=>{
-    const { error } = loginValidator.validate({...req.body})
-    if(error) throw new BadRequestError(error.message)
-
     const user = await User.findOne({ email:req.body.email })
     if(!user) throw new UnauthenticatedError('Invalid credentials')
 
@@ -73,8 +67,6 @@ const passportGoogle = async(req,res)=>{
 
 const forgotPassword = async(req,res)=>{
     const { email } = req.body
-    const { error } = forgotPasswordValidator.validate({...req.body})
-    if(error) throw new BadRequestError(error.message)
     
     const user = await User.findOne({ email })
     if(!user) throw new UnauthenticatedError('Invalid credentials')
@@ -107,9 +99,6 @@ const resetPassword = async(req,res)=>{
 }
 
 const changePassword = async(req,res)=>{
-    const {error} = changePasswordValidator.validate({...req.body})
-    if(error) throw new BadRequestError(error.message)
-
     let { old_password, new_password } = req.body
     const { userID:_id } = req.user
     

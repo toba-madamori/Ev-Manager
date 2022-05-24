@@ -9,31 +9,31 @@ const phone_number = Joi.string().length(11).pattern(/^(?:(?:(?:\+?234(?:\h1)?|0
 const array = Joi.array().items(Joi.string().trim(true))
 const rating = Joi.number().integer().min(1).max(5)
 
-const registerValidator = Joi.object().keys({
+const registerSchema = Joi.object().keys({
     name:string_required,
     email,
     password
 })
 
-const loginValidator = Joi.object().keys({
+const loginSchema = Joi.object().keys({
     email,
     password
 })
 
-const forgotPasswordValidator = Joi.object().keys({
+const forgotPasswordSchema = Joi.object().keys({
     email
 })
 
-const ratingValidator = Joi.object().keys({
+const ratingSchema = Joi.object().keys({
     rating
 })
 
-const changePasswordValidator = Joi.object().keys({
+const changePasswordSchema = Joi.object().keys({
     new_password:password,
     old_password:password
 })
 
-const profileUpdateValidator = Joi.object().keys({
+const profileUpdateSchema = Joi.object().keys({
     name: Joi.string().trim(true),
     email: Joi.string().email().trim(true),
     phone_number,
@@ -59,11 +59,11 @@ const createEventSchema = Joi.object().keys({
 })
 
 module.exports = {
-    registerValidator,
-    loginValidator,
-    forgotPasswordValidator,
-    changePasswordValidator,
-    profileUpdateValidator,
-    ratingValidator,
+    registerSchema,
+    loginSchema,
+    forgotPasswordSchema,
+    changePasswordSchema,
+    profileUpdateSchema,
+    ratingSchema,
     createEventSchema
 }
