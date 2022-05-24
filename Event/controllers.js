@@ -8,7 +8,8 @@ const { eventRegistrationToken } = require('../Utils/tokens')
 const getEvent = async(req,res)=>{
     const { id:eventID } = req.params
 
-    res.status(StatusCodes.OK).json({ msg:"get a particular event" })
+    const event = await Event.findById({ _id:eventID })
+    res.status(StatusCodes.OK).json({ event })
 }
 
 // get all events created by a particular host/user: for users to view all the events theyve created
