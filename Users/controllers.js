@@ -8,7 +8,6 @@ const sendEmail = require('../Utils/emailService')
 const { UnauthenticatedError, BadRequestError, NotFoundError } = require('../Errors')
 const bcrypt = require('bcrypt')
 const Profile = require('../Profile/models')
-const { registerValidator, loginValidator, forgotPasswordValidator,changePasswordValidator } = require('../Utils/validation')
 
 const register = async(req,res)=>{
     const user = await User.create({...req.body})
