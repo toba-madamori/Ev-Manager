@@ -1,5 +1,4 @@
 const { StatusCodes } = require('http-status-codes')
-const { createEventValidator } = require('../Utils/validation')
 const { BadRequestError } = require('../Errors')
 const { Event } = require('./model')
 const { eventRegistrationToken } = require('../Utils/tokens')
@@ -10,9 +9,6 @@ const getEvent = async(req,res)=>{
 }
 
 const createEvent = async(req,res)=>{
-    const { error } = createEventValidator.validate({...req.body})
-    if(error) throw new BadRequestError(error.message)
-
     const { userID } = req.user
     req.body.userid = userID
     

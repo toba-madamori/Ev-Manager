@@ -40,7 +40,7 @@ const profileUpdateValidator = Joi.object().keys({
     tags:array
 })
 
-const createEventValidator = Joi.object().keys({
+const createEventSchema = Joi.object().keys({
     name:string_required,
     image: array,
     event_programme: array,
@@ -65,5 +65,5 @@ module.exports = {
     changePasswordValidator,
     profileUpdateValidator,
     ratingValidator,
-    createEventValidator
+    createEventSchema
 }
