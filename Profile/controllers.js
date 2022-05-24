@@ -2,21 +2,17 @@ const { StatusCodes } = require('http-status-codes')
 const { UnauthenticatedError, BadRequestError, NotFoundError } = require('../Errors')
 const User = require('../Users/models')
 const Profile = require('./models')
-const { profileUpdateValidator, ratingValidator } = require('../Utils/validation')
 const stats = require('stats-lite')
 
 
 const getProfile = async(req,res)=>{
-    const { id:profileID } = req.params
+    const { userID:_id } = req.user
 
-    const profile = await Profile.findById({ _id:profileID }).populate('userid', 'name email')
+    const profile = await Profile.findOne({userid:_id }).populate('userid', 'name email -_id')
     res.status(StatusCodes.OK).json({ profile })
 }
 
 const updateProfile = async(req,res)=>{
-    const { error } = profileUpdateValidator.validate({...req.body})
-    if(error) throw new BadRequestError(error.message)
-
     const { name, email, phone_number, tags }= req.body
     const { userID:_id } = req.user
     const { id:profileID } = req.params
@@ -37,9 +33,6 @@ const updateProfile = async(req,res)=>{
 const rateUser = async(req,res)=>{
     const { id:_id } = req.params
     let { rating } = req.query
-
-    const {error} = ratingValidator.validate({rating})
-    if(error) throw new BadRequestError(error.message)
 
     const profile = await Profile.findById(_id)
     rating = stats.mean([profile.rating, rating])
