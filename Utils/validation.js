@@ -81,10 +81,15 @@ const updateEventSchema = Joi.object().keys({
     })
 })
 
+const optionalIdValidator = Joi.object().keys({
+    id: Joi.string().hex().length(24).pattern(/^[0-9a-fA-F]{24}$/)
+})
+
 const getEventValidator = Joi.object().keys({
     tags: Joi.string().trim(true),
     page: Joi.number().integer(),
     limit: Joi.number().integer(),
+    token: Joi.string()
 })
 
 
@@ -98,5 +103,6 @@ module.exports = {
     createEventSchema,
     idValidator,
     updateEventSchema,
-    getEventValidator
+    getEventValidator,
+    optionalIdValidator
 }

@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError } = require('../Errors')
 const { Event, Link } = require('./model')
-const { eventRegistrationToken } = require('../Utils/tokens')
+const { eventRegistrationToken, verifyEventRegistrationToken } = require('../Utils/tokens')
 const { userValidator, updateValidator } = require('../Utils/event')
 
 
@@ -99,7 +99,15 @@ const generateLink = async(req,res)=>{
 // from here they can register for the event...event id will be gotten after token verification
 // token will come as a query as it is an optional method for the attendee to find the event
 const getEventHostee = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"get event for attendee" })
+    const { token } = req.query
+    let { id:eventID } = req.params
+
+    if(token){
+        payload = await verifyEventRegistrationToken(token) 
+        eventID = payload.id
+    }
+    const event = await Event.findById({ _id:eventID })
+    res.status(StatusCodes.OK).json({ event })
 }
 
 module.exports={
@@ -111,5 +119,6 @@ module.exports={
     registerForEvent,
     generateLink,
     trendingEvents,
-    getAllEvents
+    getAllEvents,
+    getEventHostee
 }

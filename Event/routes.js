@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const { getEvent, createEvent, updateEvent, deleteEvent, searchEvents, registerForEvent, generateLink, trendingEvents, getAllEvents} = require('./controllers')
+const { getEvent, createEvent, updateEvent, deleteEvent, searchEvents, registerForEvent, generateLink, trendingEvents, getAllEvents, getEventHostee} = require('./controllers')
 const validator = require('express-joi-validation').createValidator({})
-const { createEventSchema, idValidator, updateEventSchema, getEventValidator } = require('../Utils/validation')
+const { createEventSchema, idValidator, updateEventSchema, getEventValidator, optionalIdValidator } = require('../Utils/validation')
 const authMiddleware = require('../Middleware/authentication')
 
 router.get('/get/event/:id',authMiddleware, validator.params(idValidator), getEvent)
@@ -13,5 +13,6 @@ router.get('/search',validator.query(getEventValidator), searchEvents)
 router.patch('/register', registerForEvent)
 router.get('/link', generateLink)
 router.get('/trending',validator.query(getEventValidator), trendingEvents)
+router.get('/get-event/:id?',validator.params(optionalIdValidator), validator.query(getEventValidator), getEventHostee)
 
 module.exports=router;
