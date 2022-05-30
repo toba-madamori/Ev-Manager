@@ -8,7 +8,7 @@ router.get('/get/event/:id',authMiddleware, validator.params(idValidator), getEv
 router.get('/get/all/events', authMiddleware, getAllEvents)
 router.post('/create', authMiddleware, validator.body(createEventSchema), createEvent)
 router.patch('/update/:id',authMiddleware,validator.params(idValidator),validator.body(updateEventSchema), updateEvent)
-router.delete('/delete', deleteEvent)
+router.delete('/delete/:id',authMiddleware,validator.params(idValidator), deleteEvent)
 router.get('/search', searchEvents)
 router.patch('/register', registerForEvent)
 router.get('/link', generateLink)

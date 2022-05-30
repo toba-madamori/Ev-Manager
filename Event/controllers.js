@@ -50,7 +50,15 @@ const updateEvent = async(req,res)=>{
 }
 
 const deleteEvent = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"delete event" })
+    const { id:eventID } = req.params
+    const { userID } = req.user
+
+    const event = await Event.findById({ _id:eventID })
+    await userValidator(event.userid, userID)
+
+    Promise.all([Event.findByIdAndDelete({ _id:eventID }), Link.findOneAndDelete({ eventid:eventID })])
+
+    res.status(StatusCodes.OK).json({ msg:"success" })
 }
 
 const searchEvents = async(req,res)=>{
