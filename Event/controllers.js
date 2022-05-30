@@ -9,8 +9,8 @@ const getEvent = async(req,res)=>{
     const { id:eventID } = req.params
 
     const event = await Event.findById({ _id:eventID })
-    const reg_token = await Link.findOne({ eventid:eventID })
-    res.status(StatusCodes.OK).json({ event, reg_token })
+    const token = await Link.findOne({ eventid:eventID }).select('reg_token -_id')
+    res.status(StatusCodes.OK).json({ event, token })
 }
 
 // get all events created by a particular host/user: for users to view all the events theyve created
