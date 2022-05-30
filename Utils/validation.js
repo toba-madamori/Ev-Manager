@@ -63,6 +63,24 @@ const idValidator = Joi.object().keys({
     token: Joi.string()
 })
 
+const updateEventSchema = Joi.object().keys({
+    name:Joi.string().trim(true),
+    image: array,
+    event_programme: array,
+    time: Joi.string().trim(true),
+    date: Joi.date().iso().messages({'date.format': `Date format is YYYY-MM-DD`}),
+    location: Joi.string().trim(true),
+    event_type: Joi.string().valid('Public', 'Private'),
+    event_fee: Joi.number().integer(),
+    tags: Joi.array().items(Joi.string().trim(true)),
+    menu: Joi.array().items(Joi.string().trim(true)),
+    additional_activities: Joi.array().items({
+        activity_name: Joi.string().required(),
+        price: Joi.number().integer().required(),
+        description: Joi.string().required()
+    })
+})
+
 module.exports = {
     registerSchema,
     loginSchema,
@@ -71,5 +89,6 @@ module.exports = {
     profileUpdateSchema,
     ratingSchema,
     createEventSchema,
-    idValidator
+    idValidator,
+    updateEventSchema
 }

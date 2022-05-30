@@ -2,6 +2,7 @@ const { StatusCodes } = require('http-status-codes')
 const { BadRequestError } = require('../Errors')
 const { Event, Link } = require('./model')
 const { eventRegistrationToken } = require('../Utils/tokens')
+const { userValidator, updateValidator } = require('../Utils/event')
 
 
 // get a particular event : host/user
@@ -36,7 +37,16 @@ const createEvent = async(req,res)=>{
 }
 
 const updateEvent = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"update event" })
+    const { id:eventID } = req.params
+    const { userID } = req.user
+    
+    const event = await Event.findById({ _id:eventID })
+    await userValidator(event.userid, userID)
+
+    const update = await updateValidator(req)
+    const updatedEvent = await Event.findByIdAndUpdate({ _id:eventID }, update, { new:true })
+
+    res.status(StatusCodes.OK).json({ updatedEvent })
 }
 
 const deleteEvent = async(req,res)=>{
@@ -59,6 +69,10 @@ const generateLink = async(req,res)=>{
     res.status(StatusCodes.OK).json({ msg:"generate link for event" })
 }
 
+// from here they can register for the event...event id will be gotten after token verification
+const getEventHostee = async(req,res)=>{
+    res.status(StatusCodes.OK).json({ msg:"get event for attendee" })
+}
 
 module.exports={
     getEvent,
