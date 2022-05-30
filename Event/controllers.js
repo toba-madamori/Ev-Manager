@@ -62,7 +62,21 @@ const deleteEvent = async(req,res)=>{
 }
 
 const searchEvents = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"search for events" })
+    let { tags } = req.query
+
+    tags = tags.split(',')
+    const queryObject = {}
+    if(tags){
+        queryObject.tags = {"$in": tags}
+    }
+    queryObject.event_type = 'Public'
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 0;
+    const skip = (page - 1)*limit;
+
+    const events = await Event.find(queryObject).select('_id name').skip(skip).limit(limit)
+    res.status(StatusCodes.OK).json({ events, nbhits:events.length })
 }
 
 const trendingEvents = async(req,res)=>{
@@ -78,6 +92,7 @@ const generateLink = async(req,res)=>{
 }
 
 // from here they can register for the event...event id will be gotten after token verification
+// token will come as a query as it is an optional method for the attendee to find the event
 const getEventHostee = async(req,res)=>{
     res.status(StatusCodes.OK).json({ msg:"get event for attendee" })
 }

@@ -81,6 +81,13 @@ const updateEventSchema = Joi.object().keys({
     })
 })
 
+const getEventValidator = Joi.object().keys({
+    tags: Joi.string().trim(true),
+    page: Joi.number().integer(),
+    limit: Joi.number().integer(),
+})
+
+
 module.exports = {
     registerSchema,
     loginSchema,
@@ -90,5 +97,6 @@ module.exports = {
     ratingSchema,
     createEventSchema,
     idValidator,
-    updateEventSchema
+    updateEventSchema,
+    getEventValidator
 }
