@@ -86,9 +86,9 @@ const LinkSchema = new mongoose.Schema({
         ref:"Events",
         required:[true, 'Please provide the eventid']
     },
-    link:{
+    reg_token:{
         type:String,
-        required:[true, 'Please provide the link']
+        required:[true, 'Please provide the reg token']
     }
 },{timestamps:true})
 
