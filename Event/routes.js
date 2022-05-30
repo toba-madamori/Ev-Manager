@@ -12,6 +12,6 @@ router.delete('/delete/:id',authMiddleware,validator.params(idValidator), delete
 router.get('/search',validator.query(getEventValidator), searchEvents)
 router.patch('/register', registerForEvent)
 router.get('/link', generateLink)
-router.get('/trending', trendingEvents)
+router.get('/trending',validator.query(getEventValidator), trendingEvents)
 
 module.exports=router;

@@ -80,7 +80,12 @@ const searchEvents = async(req,res)=>{
 }
 
 const trendingEvents = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"list of trending events" })
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 0;
+    const skip = (page - 1)*limit;
+
+    const events = await Event.find({event_type:'Public'}).sort({ num_reg_hostees:-1}).select('_id name').skip(skip).limit(limit)
+    res.status(StatusCodes.OK).json({ events, nbhits:events.length })
 }
 
 const registerForEvent = async(req,res)=>{
