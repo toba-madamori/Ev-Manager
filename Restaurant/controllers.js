@@ -36,7 +36,16 @@ const updateRestaurant = async(req,res)=>{
 }
 
 const deleteRestaurant = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"delete a restaurant" })
+    const { id:restaurantID } = req.params
+    const { userID } = req.user
+
+    const prevRestaurant = await Restaurant.findById(restaurantID)
+    if(!prevRestaurant) throw new NotFoundError("sorry this restuarant doesn't exist")    
+
+    await userValidator(prevRestaurant.userid, userID)
+    await Restaurant.findByIdAndDelete(restaurantID)
+
+    res.status(StatusCodes.OK).json({ msg:"success" })
 }
 
 const rateRestaurant = async(req,res)=>{
