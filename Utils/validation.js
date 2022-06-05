@@ -8,6 +8,7 @@ const provider = Joi.string().required()
 const phone_number = Joi.string().length(11).pattern(/^(?:(?:(?:\+?234(?:\h1)?|01)\h*)?(?:\(\d{3}\)|\d{3})|\d{4})(?:\W*\d{3})?\W*\d{4}$/)
 const array = Joi.array().items(Joi.string().trim(true))
 const rating = Joi.number().integer().min(1).max(5)
+const id = Joi.string().hex().length(24).pattern(/^[0-9a-fA-F]{24}$/).required()
 
 const registerSchema = Joi.object().keys({
     name:string_required,
@@ -108,6 +109,10 @@ const createRestaurantSchema = Joi.object().keys({
     rating
 })
 
+const restaurantID = Joi.object().keys({
+    id
+})
+
 module.exports = {
     registerSchema,
     loginSchema,
@@ -120,5 +125,6 @@ module.exports = {
     updateEventSchema,
     getEventValidator,
     optionalIdValidator,
-    createRestaurantSchema
+    createRestaurantSchema,
+    restaurantID
 }

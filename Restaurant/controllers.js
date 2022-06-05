@@ -1,4 +1,5 @@
 const { StatusCodes } = require('http-status-codes')
+const { NotFoundError } = require('../Errors')
 const Restaurant = require('./model')
 
 const createRestaurant = async(req,res)=>{
@@ -11,7 +12,12 @@ const createRestaurant = async(req,res)=>{
 }
 
 const getRestaurant = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"get a restaurant" })
+    const { id:restaurantID } = req.params 
+
+    const restaurant = await Restaurant.findById(restaurantID)
+    if(!restaurant) throw new NotFoundError("sorry this restuarant doesn't exist")
+
+    res.status(StatusCodes.OK).json({ restaurant })
 }
 
 const updateRestaurant = async(req,res)=>{
