@@ -92,6 +92,21 @@ const getEventValidator = Joi.object().keys({
     token: Joi.string()
 })
 
+const createRestaurantSchema = Joi.object().keys({
+    name:string_required,
+    days_open:string_required,
+    opening_time:string_required,
+    closing_time:string_required,
+    menu:Joi.array().items({
+        food: Joi.string().required(),
+        price: Joi.number().integer().required(),
+        pictures: Joi.array().items(Joi.string().trim(true)).min(3).max(5).required()
+    }),
+    location:string_required,
+    capacity:string_required,
+    pictures:Joi.array().items(Joi.string().trim(true)).min(5).max(10).required(),
+    rating
+})
 
 module.exports = {
     registerSchema,
@@ -104,5 +119,6 @@ module.exports = {
     idValidator,
     updateEventSchema,
     getEventValidator,
-    optionalIdValidator
+    optionalIdValidator,
+    createRestaurantSchema
 }

@@ -1,7 +1,13 @@
 const { StatusCodes } = require('http-status-codes')
+const Restaurant = require('./model')
 
 const createRestaurant = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"create a new restaurant" })
+    const { userID } = req.user
+    req.body.userid = userID
+
+    const restaurant = await Restaurant.create({ ...req.body })
+
+    res.status(StatusCodes.CREATED).json({ restaurant })
 }
 
 const getRestaurant = async(req,res)=>{
