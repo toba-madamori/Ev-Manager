@@ -104,7 +104,7 @@ const createRestaurantSchema = Joi.object().keys({
         pictures: Joi.array().items(Joi.string().trim(true)).min(3).max(5).required()
     }).required(),
     location:string_required,
-    capacity:string_required,
+    capacity:Joi.number().integer().required(),
     pictures:Joi.array().items(Joi.string().trim(true)).min(5).max(10).required(),
     rating
 })
@@ -124,7 +124,7 @@ const updateRestaurantSchema = Joi.object().keys({
         pictures: Joi.array().items(Joi.string().trim(true)).min(3).max(5).required()
     }),
     location:Joi.string().trim(true),
-    capacity:Joi.string().trim(true),
+    capacity:Joi.number().integer(),
     pictures:Joi.array().items(Joi.string().trim(true)).min(5).max(10),
     rating
 })

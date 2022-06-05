@@ -42,7 +42,7 @@ const RestaurantSchema = new mongoose.Schema({
         required:[true, 'please provide the location of your restaurant']
     },
     capacity: {
-        type:String,
+        type:Number,
         required:[true, 'please provide the capacity of your restaurant']
     },
     pictures: [{
