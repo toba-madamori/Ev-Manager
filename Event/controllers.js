@@ -1,8 +1,8 @@
 const { StatusCodes } = require('http-status-codes')
-const { BadRequestError } = require('../Errors')
+const { BadRequestError, NotFoundError } = require('../Errors')
 const { Event, Link } = require('./model')
 const { eventRegistrationToken, verifyEventRegistrationToken } = require('../Utils/tokens')
-const { userValidator, updateValidator } = require('../Utils/event')
+const { userValidator } = require('../Utils/event')
 
 
 // get a particular event : host/user
@@ -41,9 +41,10 @@ const updateEvent = async(req,res)=>{
     const { userID } = req.user
     
     const event = await Event.findById({ _id:eventID })
+    if(!event) throw new NotFoundError("sorry this event doesn't exist")
     await userValidator(event.userid, userID)
 
-    const update = await updateValidator(req)
+    const update = { ...req.body }
     const updatedEvent = await Event.findByIdAndUpdate({ _id:eventID }, update, { new:true })
 
     res.status(StatusCodes.OK).json({ updatedEvent })
