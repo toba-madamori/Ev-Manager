@@ -2,6 +2,8 @@ const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../Errors')
 const Restaurant = require('./model')
 const { userValidator } = require('../Utils/event')
+const stats = require('stats-lite')
+
 
 const createRestaurant = async(req,res)=>{
     const { userID } = req.user
@@ -49,7 +51,18 @@ const deleteRestaurant = async(req,res)=>{
 }
 
 const rateRestaurant = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"rate a restaurant" })
+    const { id:restaurantID } = req.params
+    let { rating } = req.query
+
+    const prevRestaurant = await Restaurant.findById(restaurantID)
+    if(!prevRestaurant) throw new NotFoundError("sorry this restaurant doesn't exist")
+    
+    rating = stats.mean([prevRestaurant.rating, rating])
+    rating = Math.round(rating)
+    
+    const restaurant = await Restaurant.findByIdAndUpdate({ _id:restaurantID }, { rating }, { new:true })
+
+    res.status(StatusCodes.OK).json({ restaurant })
 }
 
 const searchRestaurants = async(req,res)=>{
