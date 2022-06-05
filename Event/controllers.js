@@ -89,10 +89,18 @@ const trendingEvents = async(req,res)=>{
 }
 
 const registerForEvent = async(req,res)=>{
+    const { eventfee, additional_fees} = req.body
+    const { id:eventID } = req.params
+
+    //register for the event here
+
+    //update the events number of registees
+
+    //generate ticket and send back as response
     res.status(StatusCodes.OK).json({ msg:"register for event" })
 }
 
-const generateLink = async(req,res)=>{
+const verifyEventToken = async(req,res)=>{
     res.status(StatusCodes.OK).json({ msg:"generate link for event" })
 }
 
@@ -117,7 +125,7 @@ module.exports={
     deleteEvent,
     searchEvents,
     registerForEvent,
-    generateLink,
+    verifyEventToken,
     trendingEvents,
     getAllEvents,
     getEventHostee
