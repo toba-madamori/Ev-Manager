@@ -102,7 +102,7 @@ const createRestaurantSchema = Joi.object().keys({
         food: Joi.string().required(),
         price: Joi.number().integer().required(),
         pictures: Joi.array().items(Joi.string().trim(true)).min(3).max(5).required()
-    }),
+    }).required(),
     location:string_required,
     capacity:string_required,
     pictures:Joi.array().items(Joi.string().trim(true)).min(5).max(10).required(),
@@ -111,6 +111,22 @@ const createRestaurantSchema = Joi.object().keys({
 
 const restaurantID = Joi.object().keys({
     id
+})
+
+const updateRestaurantSchema = Joi.object().keys({
+    name:Joi.string().trim(true),
+    days_open:Joi.string().trim(true),
+    opening_time:Joi.string().trim(true),
+    closing_time:Joi.string().trim(true),
+    menu:Joi.array().items({
+        food: Joi.string().required(),
+        price: Joi.number().integer().required(),
+        pictures: Joi.array().items(Joi.string().trim(true)).min(3).max(5).required()
+    }),
+    location:Joi.string().trim(true),
+    capacity:Joi.string().trim(true),
+    pictures:Joi.array().items(Joi.string().trim(true)).min(5).max(10),
+    rating
 })
 
 module.exports = {
@@ -126,5 +142,6 @@ module.exports = {
     getEventValidator,
     optionalIdValidator,
     createRestaurantSchema,
-    restaurantID
+    restaurantID,
+    updateRestaurantSchema
 }

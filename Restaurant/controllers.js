@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const { NotFoundError } = require('../Errors')
 const Restaurant = require('./model')
+const { userValidator } = require('../Utils/event')
 
 const createRestaurant = async(req,res)=>{
     const { userID } = req.user
@@ -21,7 +22,17 @@ const getRestaurant = async(req,res)=>{
 }
 
 const updateRestaurant = async(req,res)=>{
-    res.status(StatusCodes.OK).json({ msg:"update a restaurant" })
+    const { id:restaurantID } = req.params
+    const { userID } = req.user
+
+    const prevRestaurant = await Restaurant.findById(restaurantID)
+    if(!prevRestaurant) throw new NotFoundError("sorry this restuarant doesn't exist")
+
+    await userValidator(prevRestaurant.userid, userID)
+    const update = { ...req.body }
+
+    const restaurant = await Restaurant.findByIdAndUpdate({ _id:restaurantID }, update, { new:true })
+    res.status(StatusCodes.OK).json({ restaurant })
 }
 
 const deleteRestaurant = async(req,res)=>{
