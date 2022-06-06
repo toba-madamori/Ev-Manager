@@ -129,6 +129,13 @@ const updateRestaurantSchema = Joi.object().keys({
     rating
 })
 
+const searchSchema = Joi.object().keys({
+    name:Joi.string().trim(true),
+    location:Joi.string().trim(true),
+    page: Joi.number().integer(),
+    limit: Joi.number().integer()
+})
+
 module.exports = {
     registerSchema,
     loginSchema,
@@ -143,5 +150,6 @@ module.exports = {
     optionalIdValidator,
     createRestaurantSchema,
     restaurantID,
-    updateRestaurantSchema
+    updateRestaurantSchema,
+    searchSchema
 }
