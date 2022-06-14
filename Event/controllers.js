@@ -90,15 +90,20 @@ const trendingEvents = async(req,res)=>{
 }
 
 const registerForEvent = async(req,res)=>{
-    const { eventfee, additional_fees} = req.body
+    const { additional_activities} = req.body
     const { id:eventID } = req.params
 
-    //register for the event here
+    const event = await Event.findByIdAndUpdate({_id:eventID}, {$inc:{'num_reg_hostees':1}})
+    let event_fee = event.event_fee
+    let additional_activities_fee = 0
+    if(additional_activities){
+        for(const item of additional_activities){
+            additional_activities_fee += item.price
+        }
+    }
+    const total_fee = event_fee + additional_activities_fee
 
-    //update the events number of registees
-
-    //generate ticket and send back as response
-    res.status(StatusCodes.OK).json({ msg:"register for event" })
+    res.status(StatusCodes.OK).json({ status:"success", ticket:{event_name:event.name, event_id:event._id, event_fee, additional_activities_fee, total_fee, status:"registered"} })
 }
 
 const verifyEventToken = async(req,res)=>{

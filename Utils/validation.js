@@ -136,6 +136,18 @@ const searchSchema = Joi.object().keys({
     limit: Joi.number().integer()
 })
 
+const eventIDSchema = Joi.object().keys({
+    id
+})
+
+const registerEventSchema = Joi.object().keys({
+    additional_activities: Joi.array().items({
+        activity_name: Joi.string().required(),
+        price: Joi.number().integer().required(),
+        description: Joi.string().required()
+    })
+})
+
 module.exports = {
     registerSchema,
     loginSchema,
@@ -151,5 +163,7 @@ module.exports = {
     createRestaurantSchema,
     restaurantID,
     updateRestaurantSchema,
-    searchSchema
+    searchSchema,
+    eventIDSchema,
+    registerEventSchema
 }
