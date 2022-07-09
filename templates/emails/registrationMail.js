@@ -2,7 +2,7 @@ class RegistrationMail {
     constructor(email, link) {
         this.email = email;
         this.body = "";
-        this.subject = 'Welcome to Hostout';
+        this.subject = 'Welcome to Ev-Manager';
         this.link = link;
         this.template = "default"
     }
@@ -12,8 +12,8 @@ class RegistrationMail {
             body: {
                 title: `Hi`,
                 intro: [
-                    "Welcome to Hostout !  We're very excited to have you join us.",
-                    `Just one more step to complete your Feedvote registration, use this link to verify your account <strong>${this.link}</strong>
+                    "Welcome to Ev-Manager !  We're very excited to have you join us.",
+                    `Just one more step to complete your Ev-Manager registration, use this link to verify your account <strong>${this.link}</strong>
                         <br>
                         Link expires in 1 day`
                 ]
