@@ -42,7 +42,7 @@ app.use(passport.initialize())
 
 // test-route
 app.get('/', (req,res)=>{
-  res.send('<h4>Hostout application is up and running at </h4><a href="">Documentation</a>')
+  res.send('<h4>Hostout application is up and running at </h4><a href="https://documenter.getpostman.com/view/14326360/UzJPLuvk">Documentation</a>')
 })
 
 //routes
