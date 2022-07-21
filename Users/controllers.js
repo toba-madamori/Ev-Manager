@@ -103,7 +103,7 @@ const changePassword = async(req,res)=>{
     
     const user = await User.findById(_id)
 
-    const isMatch = user.comparePassword(old_password)
+    const isMatch = await user.comparePassword(old_password)
     if(!isMatch) throw new UnauthenticatedError('Invalid credentials')
 
     const salt = await bcrypt.genSalt(10)
