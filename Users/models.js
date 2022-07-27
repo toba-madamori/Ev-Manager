@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema({
     },
     password:{
         type:String,
-        // required:[true, 'please provide a password'], not required cos of passport
+        required:[true, 'please provide a password'],
         minlength:6
     },
     verified:{

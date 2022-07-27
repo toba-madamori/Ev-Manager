@@ -1,15 +1,25 @@
 const passport = require('passport')
+const { BadRequestError } = require('../Errors')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const User = require('../Users/models')
 
 const FindOrCreate = (input)=>{
-    return new Promise((resolve, reject)=>{
-        const user = User.findOne({ email:input._json.email})
-        if(user.provider === input.provider || user.password) {
-            return resolve(user)
-        } else{
-            const newUser = User.create({ name:input.givenName, email:input._json.email, provider:input.provider })
-            return resolve(newUser)
+    return new Promise(async(resolve, reject)=>{
+        try {
+            const user = await User.findOne({ email:input._json.email})
+            if(!user) throw new BadRequestError("Invalid Credentials")
+            
+            if(user.provider === input.provider || user.password) {
+                if(user.provider === "Null"){
+                    await User.findByIdAndUpdate({_id:user._id}, {provider:input.provider})
+                }
+                return resolve(user)
+            } else{
+                const newUser = await User.create({ name:input.givenName, email:input._json.email, provider:input.provider, password:"password", verified:true })
+                return resolve(newUser)
+            }
+        } catch (error) {
+            reject(error)
         }
     })
 }

@@ -55,10 +55,6 @@ const passportGoogle = async(req,res)=>{
     let user = req.user
     const validatedOrCreatedUser = await FindOrCreate(user)
 
-    if(!validatedOrCreatedUser.confirmed){
-        // send confirm registration email
-        return res.status(StatusCodes.OK).json({ msg:"successful registration, head to your email to confirm your registration" })
-    }
     const accessToken = await signAccessToken(validatedOrCreatedUser._id)
     res.status(StatusCodes.OK).json({ accessToken })
 }
